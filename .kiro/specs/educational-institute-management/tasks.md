@@ -10,14 +10,14 @@
 
 - [x] 2. Implement core JPA entities and database schema
 
-
   - Create JPA entity classes for all core tables (Lead, Student, Batch, Course, Employee, Placement, Company, User)
   - Define entity relationships with proper JPA annotations (@OneToMany, @ManyToOne, etc.)
   - Implement database constraints, validations, and column mappings
   - Create database migration scripts or use JPA auto-generation for initial schema
   - _Requirements: 9.1, 9.5_
 
-- [ ] 3. Create repository layer with Spring Data JPA
+- [x] 3. Create repository layer with Spring Data JPA
+
 
   - Implement repository interfaces extending JpaRepository for each entity
   - Add custom query methods for complex filtering and search operations
