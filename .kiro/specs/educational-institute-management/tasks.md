@@ -18,13 +18,13 @@
 
 - [x] 3. Create repository layer with Spring Data JPA
 
-
   - Implement repository interfaces extending JpaRepository for each entity
   - Add custom query methods for complex filtering and search operations
   - Create repository tests to verify data access operations
   - _Requirements: 9.1, 9.5_
 
-- [ ] 4. Implement JWT-based authentication and security configuration
+- [x] 4. Implement JWT-based authentication and security configuration
+
 
   - Create JWT token provider for generating and validating tokens
   - Implement UserDetailsService for loading user authentication details
