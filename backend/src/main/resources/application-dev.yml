@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/institute_management_dev
+    username: ${DB_USERNAME:institute_user}
+    password: ${DB_PASSWORD:institute_password}
+
+logging:
+  level:
+    com.institute.management: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE

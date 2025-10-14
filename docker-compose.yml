@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: institute_postgres
+    environment:
+      POSTGRES_DB: institute_management
+      POSTGRES_USER: institute_user
+      POSTGRES_PASSWORD: institute_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/migration:/docker-entrypoint-initdb.d
+    networks:
+      - institute_network
+
+  postgres_dev:
+    image: postgres:15-alpine
+    container_name: institute_postgres_dev
+    environment:
+      POSTGRES_DB: institute_management_dev
+      POSTGRES_USER: institute_user
+      POSTGRES_PASSWORD: institute_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    networks:
+      - institute_network
+
+volumes:
+  postgres_data:
+  postgres_dev_data:
+
+networks:
+  institute_network:
+    driver: bridge
