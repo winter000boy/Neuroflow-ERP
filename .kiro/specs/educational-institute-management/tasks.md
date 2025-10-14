@@ -25,14 +25,14 @@
 
 - [x] 4. Implement JWT-based authentication and security configuration
 
-
   - Create JWT token provider for generating and validating tokens
   - Implement UserDetailsService for loading user authentication details
   - Configure Spring Security with JWT authentication filter
   - Create authentication endpoints (login, refresh, logout) with proper token handling
   - _Requirements: 1.1, 1.2, 1.8_
 
-- [ ] 5. Implement role-based authorization system
+- [x] 5. Implement role-based authorization system
+
 
   - Create role-based access control using @PreAuthorize annotations
   - Configure method-level security for different user roles (ADMIN, COUNSELLOR, FACULTY, etc.)
