@@ -40,7 +40,12 @@
   - Create tests to verify role-based access restrictions
   - _Requirements: 1.3, 1.4, 1.5, 1.6, 1.7_
 
-- [ ] 6. Create DTO classes and global exception handling
+- [x] 6. Create DTO classes and global exception handling
+
+
+
+
+
 
   - Implement request and response DTO classes for all API endpoints
   - Create global exception handler with @ControllerAdvice for consistent error responses
