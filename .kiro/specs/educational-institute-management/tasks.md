@@ -33,7 +33,6 @@
 
 - [x] 5. Implement role-based authorization system
 
-
   - Create role-based access control using @PreAuthorize annotations
   - Configure method-level security for different user roles (ADMIN, COUNSELLOR, FACULTY, etc.)
   - Implement authorization checks in service layer methods
@@ -42,18 +41,13 @@
 
 - [x] 6. Create DTO classes and global exception handling
 
-
-
-
-
-
   - Implement request and response DTO classes for all API endpoints
   - Create global exception handler with @ControllerAdvice for consistent error responses
   - Implement custom exception classes for business logic errors
   - Add validation annotations to DTOs and test validation error handling
   - _Requirements: 9.3, 9.4_
 
-- [ ] 7. Implement Lead Management API and service layer
+- [x] 7. Implement Lead Management API and service layer
 
   - Create LeadController with CRUD endpoints and lead conversion functionality
   - Implement LeadService with business logic for lead management and follow-up tracking
@@ -61,7 +55,8 @@
   - Create unit tests for lead service methods and controller endpoints
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-- [ ] 8. Implement Student Management API and service layer
+- [x] 8. Implement Student Management API and service layer
+
 
   - Create StudentController with enrollment, batch assignment, and status management endpoints
   - Implement StudentService with enrollment number generation and batch capacity validation

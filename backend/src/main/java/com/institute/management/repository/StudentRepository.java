@@ -111,6 +111,9 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     @Query("SELECT s FROM Student s WHERE s.batch IS NULL AND s.status = 'ACTIVE'")
     List<Student> findStudentsWithoutBatch();
     
+    @Query("SELECT s FROM Student s WHERE s.batch IS NULL AND s.status = 'ACTIVE'")
+    Page<Student> findStudentsWithoutBatch(Pageable pageable);
+    
     // Recent enrollments
     @Query("SELECT s FROM Student s ORDER BY s.enrollmentDate DESC")
     Page<Student> findRecentEnrollments(Pageable pageable);
@@ -122,4 +125,23 @@ public interface StudentRepository extends JpaRepository<Student, UUID> {
     // Generate next enrollment number (helper for service layer)
     @Query("SELECT s.enrollmentNumber FROM Student s WHERE s.enrollmentNumber LIKE :prefix% ORDER BY s.enrollmentNumber DESC")
     List<String> findEnrollmentNumbersWithPrefix(@Param("prefix") String prefix);
+    
+    // Enhanced search with date range
+    @Query("SELECT s FROM Student s WHERE " +
+           "(:status IS NULL OR s.status = :status) AND " +
+           "(:batchId IS NULL OR s.batch.id = :batchId) AND " +
+           "(:courseId IS NULL OR s.batch.course.id = :courseId) AND " +
+           "(:searchTerm IS NULL OR LOWER(CONCAT(s.firstName, ' ', s.lastName)) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(s.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "s.phone LIKE CONCAT('%', :searchTerm, '%') OR " +
+           "LOWER(s.enrollmentNumber) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) AND " +
+           "(:startDate IS NULL OR s.enrollmentDate >= :startDate) AND " +
+           "(:endDate IS NULL OR s.enrollmentDate <= :endDate)")
+    Page<Student> findStudentsWithFiltersAndDateRange(@Param("status") Student.StudentStatus status,
+                                                     @Param("batchId") UUID batchId,
+                                                     @Param("courseId") UUID courseId,
+                                                     @Param("searchTerm") String searchTerm,
+                                                     @Param("startDate") LocalDate startDate,
+                                                     @Param("endDate") LocalDate endDate,
+                                                     Pageable pageable);
 }
