@@ -17,6 +17,7 @@ public class LeadBasicDTO {
     private String fullName;
     private String email;
     private String phone;
+    private String courseInterest;
     private Lead.LeadStatus status;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
@@ -26,13 +27,14 @@ public class LeadBasicDTO {
     public LeadBasicDTO() {}
     
     public LeadBasicDTO(UUID id, String firstName, String lastName, String email, 
-                       String phone, Lead.LeadStatus status, LocalDateTime createdDate) {
+                       String phone, String courseInterest, Lead.LeadStatus status, LocalDateTime createdDate) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.fullName = firstName + " " + lastName;
         this.email = email;
         this.phone = phone;
+        this.courseInterest = courseInterest;
         this.status = status;
         this.createdDate = createdDate;
     }
@@ -84,6 +86,14 @@ public class LeadBasicDTO {
     
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+    
+    public String getCourseInterest() {
+        return courseInterest;
+    }
+    
+    public void setCourseInterest(String courseInterest) {
+        this.courseInterest = courseInterest;
     }
     
     public Lead.LeadStatus getStatus() {

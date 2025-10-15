@@ -59,7 +59,7 @@ public class BatchController {
         // Validate instructor if provided
         Employee instructor = null;
         if (request.getInstructorId() != null) {
-            instructor = employeeService.getEmployeeById(request.getInstructorId())
+            instructor = employeeService.getEmployeeEntityById(request.getInstructorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instructor not found with id: " + request.getInstructorId()));
         }
 
@@ -139,7 +139,7 @@ public class BatchController {
         // Validate instructor if provided
         Employee instructor = null;
         if (request.getInstructorId() != null) {
-            instructor = employeeService.getEmployeeById(request.getInstructorId())
+            instructor = employeeService.getEmployeeEntityById(request.getInstructorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Instructor not found with id: " + request.getInstructorId()));
         }
 
