@@ -73,14 +73,14 @@
 
 - [x] 10. Implement Employee Management API
 
-
   - Create EmployeeController with CRUD operations and role-based filtering
   - Implement EmployeeService with role validation and department management
   - Add employee search and filtering capabilities by role and department
   - Create unit tests for employee management and role assignment
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
 
-- [ ] 11. Implement Placement and Company Management API
+- [x] 11. Implement Placement and Company Management API
+
 
   - Create PlacementController and CompanyController with full CRUD operations
   - Implement PlacementService with placement statistics and reporting functionality

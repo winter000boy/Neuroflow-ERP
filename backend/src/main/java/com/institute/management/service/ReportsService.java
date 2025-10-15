@@ -71,13 +71,12 @@ public class ReportsService {
         Map<String, Object> report = new HashMap<>();
         
         // Get placement statistics
-        PlacementService.PlacementStatistics stats = placementService.getPlacementStatistics();
+        Map<String, Object> stats = placementService.getPlacementStatistics();
         
         report.put("period", startDate + " to " + endDate);
-        report.put("totalPlacements", stats.getTotalPlacements());
-        report.put("activePlacements", stats.getActivePlacements());
-        report.put("averageSalary", stats.getAverageSalary());
-        report.put("placementRate", stats.getPlacementRate());
+        report.put("totalPlacements", stats.get("totalPlacements"));
+        report.put("activePlacements", stats.get("activePlacements"));
+        report.put("placementRate", stats.get("placementRate"));
         report.put("placementsByCompany", new HashMap<String, Integer>());
         report.put("salaryRanges", new HashMap<String, Integer>());
         
