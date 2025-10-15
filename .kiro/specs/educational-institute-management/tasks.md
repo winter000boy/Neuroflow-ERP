@@ -64,7 +64,12 @@
   - Create unit tests for student service methods and enrollment workflows
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 9. Implement Batch and Course Management API
+- [x] 9. Implement Batch and Course Management API
+
+
+
+
+
 
   - Create BatchController and CourseController with full CRUD operations
   - Implement BatchService with capacity management and student assignment validation

@@ -1,8 +1,12 @@
 package com.institute.management.service;
 
+import com.institute.management.dto.BatchUtilizationDTO;
 import com.institute.management.entity.Batch;
 import com.institute.management.entity.Course;
 import com.institute.management.entity.Employee;
+import com.institute.management.exception.ResourceNotFoundException;
+import com.institute.management.exception.BatchCapacityExceededException;
+import com.institute.management.exception.ValidationException;
 import com.institute.management.repository.BatchRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -37,14 +42,28 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS')")
     public Batch updateBatch(UUID id, Batch batchDetails) {
         Batch batch = batchRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + id));
+        
+        // Validate capacity constraints if capacity is being updated
+        if (batchDetails.getCapacity() != null && batchDetails.getCapacity() < batch.getCurrentEnrollment()) {
+            throw new BatchCapacityExceededException("New capacity cannot be less than current enrollment: " + batch.getCurrentEnrollment());
+        }
         
         batch.setName(batchDetails.getName());
-        batch.setCourse(batchDetails.getCourse());
+        if (batchDetails.getCourse() != null) {
+            batch.setCourse(batchDetails.getCourse());
+        }
         batch.setStartDate(batchDetails.getStartDate());
         batch.setEndDate(batchDetails.getEndDate());
-        batch.setCapacity(batchDetails.getCapacity());
-        batch.setStatus(batchDetails.getStatus());
+        if (batchDetails.getCapacity() != null) {
+            batch.setCapacity(batchDetails.getCapacity());
+        }
+        if (batchDetails.getStatus() != null) {
+            batch.setStatus(batchDetails.getStatus());
+        }
+        if (batchDetails.getInstructor() != null) {
+            batch.setInstructor(batchDetails.getInstructor());
+        }
         
         return batchRepository.save(batch);
     }
@@ -95,11 +114,11 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS')")
     public Batch updateBatchCapacity(UUID batchId, Integer newCapacity) {
         Batch batch = batchRepository.findById(batchId)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + batchId));
         
         // Validate that new capacity is not less than current enrollment
         if (newCapacity < batch.getCurrentEnrollment()) {
-            throw new RuntimeException("New capacity cannot be less than current enrollment: " + batch.getCurrentEnrollment());
+            throw new BatchCapacityExceededException("New capacity cannot be less than current enrollment: " + batch.getCurrentEnrollment());
         }
         
         batch.setCapacity(newCapacity);
@@ -112,7 +131,7 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS')")
     public Batch updateBatchStatus(UUID batchId, Batch.BatchStatus status) {
         Batch batch = batchRepository.findById(batchId)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + batchId));
         
         batch.setStatus(status);
         return batchRepository.save(batch);
@@ -124,11 +143,11 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteBatch(UUID id) {
         Batch batch = batchRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + id));
         
         // Prevent deletion if students are enrolled
         if (batch.getCurrentEnrollment() > 0) {
-            throw new RuntimeException("Cannot delete batch with enrolled students");
+            throw new ValidationException("Cannot delete batch with enrolled students");
         }
         
         batchRepository.deleteById(id);
@@ -148,7 +167,7 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS') or hasRole('COUNSELLOR')")
     public boolean hasAvailableCapacity(UUID batchId) {
         Batch batch = batchRepository.findById(batchId)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + batchId));
         
         return batch.getCurrentEnrollment() < batch.getCapacity();
     }
@@ -159,8 +178,42 @@ public class BatchService {
     @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS') or hasRole('COUNSELLOR')")
     public Integer getAvailableSlots(UUID batchId) {
         Batch batch = batchRepository.findById(batchId)
-            .orElseThrow(() -> new RuntimeException("Batch not found with id: " + batchId));
+            .orElseThrow(() -> new ResourceNotFoundException("Batch not found with id: " + batchId));
         
         return batch.getCapacity() - batch.getCurrentEnrollment();
+    }
+    
+    /**
+     * Get batches with filters - ADMIN, OPERATIONS, and FACULTY can view batches
+     */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS') or hasRole('FACULTY')")
+    public Page<Batch> getBatchesWithFilters(Batch.BatchStatus status, UUID courseId, UUID instructorId, 
+                                           Boolean hasAvailableSlots, String searchTerm, Pageable pageable) {
+        return batchRepository.findBatchesWithFilters(status, courseId, instructorId, hasAvailableSlots, searchTerm, pageable);
+    }
+    
+    /**
+     * Get batch utilization report - ADMIN and OPERATIONS can view reports
+     */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('OPERATIONS')")
+    public List<BatchUtilizationDTO> getBatchUtilizationReport() {
+        List<Object[]> results = batchRepository.getBatchUtilizationReport();
+        
+        return results.stream().map(result -> {
+            Batch batch = (Batch) result[0];
+            Double utilization = (Double) result[1];
+            
+            BatchUtilizationDTO dto = new BatchUtilizationDTO();
+            dto.setBatchId(batch.getId());
+            dto.setBatchName(batch.getName());
+            dto.setCourseName(batch.getCourse().getName());
+            dto.setCapacity(batch.getCapacity());
+            dto.setCurrentEnrollment(batch.getCurrentEnrollment());
+            dto.setUtilizationPercentage(utilization);
+            dto.setAvailableSlots(batch.getAvailableSlots());
+            dto.setStatus(batch.getStatus());
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
 }

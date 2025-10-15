@@ -29,6 +29,8 @@ public class CourseResponseDTO {
     private LocalDateTime updatedDate;
     
     private List<BatchBasicDTO> batches;
+    private Integer batchCount;
+    private Integer totalEnrollments;
     
     // Constructors
     public CourseResponseDTO() {}
@@ -104,5 +106,21 @@ public class CourseResponseDTO {
     
     public void setBatches(List<BatchBasicDTO> batches) {
         this.batches = batches;
+    }
+    
+    public Integer getBatchCount() {
+        return batchCount;
+    }
+    
+    public void setBatchCount(Integer batchCount) {
+        this.batchCount = batchCount;
+    }
+    
+    public Integer getTotalEnrollments() {
+        return totalEnrollments;
+    }
+    
+    public void setTotalEnrollments(Integer totalEnrollments) {
+        this.totalEnrollments = totalEnrollments;
     }
 }
